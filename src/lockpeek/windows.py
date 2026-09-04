@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import ctypes
 import os
+from collections.abc import Callable
 from ctypes import POINTER, Structure, byref, c_void_p, wintypes
 from pathlib import Path
+from typing import cast
 
 from .core import Holder
 
@@ -39,13 +41,20 @@ def _raise_api_error(function: str, code: int) -> None:
     raise OSError(code, f"{function} returned Windows error {code}")
 
 
+def _load_restart_manager() -> ctypes.CDLL:
+    """Load the Windows DLL while keeping type checking portable."""
+
+    loader = cast(Callable[[str], ctypes.CDLL], getattr(ctypes, "WinDLL", ctypes.CDLL))
+    return loader("rstrtmgr.dll")
+
+
 def find_holders(path: Path) -> list[Holder]:
     """Ask Windows Restart Manager which registered apps use ``path``."""
 
     if os.name != "nt":
         raise OSError("Restart Manager is available only on Windows")
 
-    dll = ctypes.WinDLL("rstrtmgr.dll")
+    dll = _load_restart_manager()
 
     start_session = dll.RmStartSession
     start_session.argtypes = [
