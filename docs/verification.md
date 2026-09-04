@@ -1,7 +1,7 @@
 # Verification record
 
-Status: release candidate; local and remote evidence are recorded before
-publishing `v0.1.0`.
+Status: `v0.1.0` is published; this record captures the local and remote
+evidence for the release.
 
 ## TDD evidence
 
@@ -37,6 +37,8 @@ Observed locally with Python 3.11:
 - `pip-audit --local`: no known vulnerabilities in installed dependencies;
   unpublished local packages may be listed as skipped.
 - `git diff --check`: exit 0.
+- Package smoke: the built wheel installed into a fresh offline virtual
+  environment and returned a valid JSON result for `examples/sample.txt`.
 
 ## Real input smoke test
 
@@ -52,13 +54,17 @@ report file.
 
 ## Security evidence
 
-Codex Security standard scan:
+Dedicated protected security scan: unavailable in this execution because no
+Codex Security connector was exposed. No protected result is represented as a
+success.
 
-- Scan ID: recorded after the final source snapshot is scanned.
-- Coverage: complete repository snapshot.
-- Findings: recorded from the canonical report; no unavailable protected result
-  is represented as a success.
-- TAC: recorded as unavailable if the connector is not connected.
+Local security evidence:
+
+- Source-boundary scan found no shell execution, process termination, network
+  client, or socket calls.
+- Secret-pattern scan found no token, API-key, password, or secret assignments.
+- `pip-audit --local` reported no known vulnerabilities in the installed
+  dependencies; local unpublished packages were listed as skipped.
 
 Security boundary reviewed: no shell invocation, no process termination, no
 file writes, bounded target count, lsof timeout, escaped terminal controls,
@@ -66,7 +72,10 @@ and explicit `UNAVAILABLE`/`ERROR` states for incomplete inspection.
 
 ## Release identity
 
-- Release commit: recorded after all checks pass.
-- CI run: recorded after public push and matrix success.
-- Release: recorded after `v0.1.0` is published.
-- Package SHA-256: recorded from exact GitHub release assets.
+- Release commit: `2980f78c4f01aba5b929010290a59a7d91eab8b3`.
+- CI run: 12/12 matrix jobs passed —
+  https://github.com/juwonllee2024-dotcom/lockpeek/actions/runs/33897992443
+- Release: https://github.com/juwonllee2024-dotcom/lockpeek/releases/tag/v0.1.0
+- Package SHA-256:
+  - `lockpeek-0.1.0-py3-none-any.whl`: `f69013d3e42aa18b67d242b9a141d308f41808a73c98145ab977eca3b93b6e82`
+  - `lockpeek-0.1.0.tar.gz`: `4f7a9259c92befb5d13f20822adb5f6a29cc7b75b0b1faa09848bdd25f81f9ae`
